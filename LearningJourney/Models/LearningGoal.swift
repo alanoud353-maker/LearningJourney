@@ -8,21 +8,15 @@
 import Foundation
 import SwiftData
 
-
+@Model
 final class LearningGoal {
 
     var topic: String
     var duration: Duration
     var startDate: Date
-    var isActive: Bool
+    var isActive: Bool  //الهدف الى الان مستمر 
 
-    init(
-        topic: String,
-        duration: Duration,
-        startDate: Date = .now,
-        isActive: Bool = true
-
-    ) {
+    init(topic: String,duration: Duration,startDate: Date = .now,isActive: Bool = true) {
         self.topic = topic
         self.duration = duration
         self.startDate = startDate

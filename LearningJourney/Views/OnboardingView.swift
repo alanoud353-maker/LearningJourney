@@ -5,9 +5,14 @@
 //  Created by alanoud on 30/05/1448 AH.
 //
 import SwiftUI
+import SwiftData
 
 struct OnboardingView: View {
+    
+    
+    @Environment(\.modelContext) private var modelContext
 
+    private let viewModel = OnboardingViewModel()
     @State private var topic = ""
     @State private var selected = "Week"
 
@@ -88,7 +93,15 @@ struct OnboardingView: View {
             // الزر السفلي
             VStack(spacing: 12) {
                 Button {
-                    // Logic later
+                    do {
+                           try viewModel.createGoal(
+                               topic: topic,
+                               selected: selected,
+                               context: modelContext
+                           )
+                       } catch {
+                           print("Failed to save goal: \(error)")
+                       }
                 } label: {
                     Text("Start Learning")
                         .font(.body.weight(.medium))

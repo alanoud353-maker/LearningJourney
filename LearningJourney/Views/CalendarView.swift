@@ -1,6 +1,21 @@
+
+
+
+
+
+
+
 import SwiftUI
+import SwiftData
 
 struct CalendarView: View {
+    
+    
+    @Query private var records: [DailyRecord]
+
+    // MARK: - ViewModel
+
+    private let viewModel = CalendarViewModel()
 
     // MARK: - UI Colors
 
@@ -24,28 +39,6 @@ struct CalendarView: View {
         "THU", "FRI", "SAT"
     ]
 
-    // MARK: - Preview Data
-
-    private let calendar = Calendar(identifier: .gregorian)
-
-    private let today = Date.now
-
-    // MARK: - Months
-
-    private var months: [Date] {
-
-        let year = calendar.component(.year, from: today)
-
-        return (1...12).compactMap { month in
-            calendar.date(
-                from: DateComponents(
-                    year: year,
-                    month: month
-                )
-            )
-        }
-    }
-
     // MARK: - Body
 
     var body: some View {
@@ -54,13 +47,9 @@ struct CalendarView: View {
 
             ScrollView {
 
-                LazyVStack(
-                    alignment: .leading,
-                    spacing: 0
-                ) {
+                LazyVStack(alignment: .leading, spacing: 0) {
 
-                    ForEach(months, id: \.self) { month in
-
+                    ForEach(viewModel.months, id: \.self) { month in
                         monthView(month)
                             .id(month)
                     }
@@ -70,13 +59,7 @@ struct CalendarView: View {
             .scrollIndicators(.hidden)
             .onAppear {
 
-                if let currentMonth = months.first(where: {
-                    calendar.isDate(
-                        $0,
-                        equalTo: today,
-                        toGranularity: .month
-                    )
-                }) {
+                if let currentMonth = viewModel.currentMonth {
 
                     proxy.scrollTo(
                         currentMonth,
@@ -85,11 +68,10 @@ struct CalendarView: View {
                 }
             }
         }
-        .background(.black)
         .foregroundStyle(.white)
-        .preferredColorScheme(.dark)
         .navigationTitle("Activities")
         .navigationBarTitleDisplayMode(.inline)
+
     }
 
     // MARK: - Month UI
@@ -106,12 +88,7 @@ struct CalendarView: View {
             .font(.headline)
             .padding(.horizontal, 8)
 
-            LazyVGrid(
-                columns: columns,
-                spacing: 10
-            ) {
-
-                // Weekdays
+            LazyVGrid(columns: columns, spacing: 10) {
 
                 ForEach(weekdays, id: \.self) { day in
 
@@ -120,10 +97,8 @@ struct CalendarView: View {
                         .foregroundStyle(.secondary)
                 }
 
-                // Calendar Days
-
                 ForEach(
-                    Array(days(in: month).enumerated()),
+                    Array(viewModel.days(in: month).enumerated()),
                     id: \.offset
                 ) { _, date in
 
@@ -146,12 +121,22 @@ struct CalendarView: View {
 
         if let date {
 
-            let day = calendar.component(.day, from: date)
+            let day = viewModel.calendar.component(
+                .day,
+                from: date
+            )
 
-            // Temporary colors for UI preview
-            let isLearned = [2, 5, 9, 14, 20].contains(day)
-            let isFrozen = [7, 17].contains(day)
+            // Temporary UI Data
+            let isLearned = records.contains {
+                viewModel.calendar.isDate($0.date, inSameDayAs: date) &&
+                $0.status == .completed
+            }
 
+            let isFrozen = records.contains {
+                viewModel.calendar.isDate($0.date, inSameDayAs: date) &&
+                $0.status == .frozen
+            }
+            
             let color = isFrozen ? cyan : orange
             let isMarked = isLearned || isFrozen
 
@@ -176,42 +161,14 @@ struct CalendarView: View {
                 .frame(height: 38)
         }
     }
-
-    // MARK: - Calendar Layout
-
-    private func days(in month: Date) -> [Date?] {
-
-        let count = calendar.range(
-            of: .day,
-            in: .month,
-            for: month
-        )?.count ?? 0
-
-        let blanks = calendar.component(
-            .weekday,
-            from: month
-        ) - 1
-
-        let leading = Array<Date?>(
-            repeating: nil,
-            count: blanks
-        )
-
-        let dates = (0..<count).map { day in
-            calendar.date(
-                byAdding: .day,
-                value: day,
-                to: month
-            )
-        }
-
-        return leading + dates
-    }
 }
 
 #Preview {
-
- 
+    NavigationStack {
         CalendarView()
-  
+    }
+    .modelContainer(
+        for: [LearningGoal.self, DailyRecord.self],
+        inMemory: true
+    )
 }

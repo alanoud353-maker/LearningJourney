@@ -1,10 +1,31 @@
+
+
+
+
+
+
+
+
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
+    @Query private var goals: [LearningGoal]
+    
     var body: some View {
-        Text("Hello, world!")
-            .padding()
         
+        NavigationStack {
+            
+            
+            
+            
+            if goals.isEmpty {
+                OnboardingView()
+            } else {
+                Logday()
+            }
+            
+        }
         
     }
 }
