@@ -1,10 +1,5 @@
 
 
-
-
-
-
-
 import SwiftUI
 import SwiftData
 
@@ -18,14 +13,13 @@ struct CalendarView: View {
     private let viewModel = CalendarViewModel()
 
     // MARK: - UI Colors
+ 
 
     private let orange = Color("Orange2")
 
-    private let cyan = Color(
-        red: 48 / 255,
-        green: 213 / 255,
-        blue: 245 / 255
-    )
+    private let cyan = Color("Cyan7")
+    
+    
 
     // MARK: - Layout
 
@@ -57,6 +51,8 @@ struct CalendarView: View {
                 .padding(.horizontal, 12)
             }
             .scrollIndicators(.hidden)
+            .scrollEdgeEffectHidden(true, for: .top)//هنا لإخفاء تأثير حافة التمرير
+             
             .onAppear {
 
                 if let currentMonth = viewModel.currentMonth {
@@ -68,10 +64,11 @@ struct CalendarView: View {
                 }
             }
         }
-        .foregroundStyle(.white)
+        .foregroundStyle(.primary)
         .navigationTitle("Activities")
         .navigationBarTitleDisplayMode(.inline)
-
+        
+        
     }
 
     // MARK: - Month UI
@@ -126,32 +123,43 @@ struct CalendarView: View {
                 from: date
             )
 
-            // Temporary UI Data
-            let isLearned = records.contains {
-                viewModel.calendar.isDate($0.date, inSameDayAs: date) &&
-                $0.status == .completed
-            }
+            let status = records
+                .filter {
+                    viewModel.calendar.isDate(
+                        $0.date,
+                        inSameDayAs: date
+                    )
+                }
+                .max { $0.date < $1.date }?
+                .status
 
-            let isFrozen = records.contains {
-                viewModel.calendar.isDate($0.date, inSameDayAs: date) &&
-                $0.status == .frozen
-            }
-            
-            let color = isFrozen ? cyan : orange
-            let isMarked = isLearned || isFrozen
+            // هل هذا اليوم الحالي؟
+            let isToday = viewModel.calendar.isDateInToday(date)
+
+            // اليوم الحالي ولم يُسجل فيه نشاط
+            let isTodayUnlogged = isToday && status == nil
+
+            // تحديد اللون
+            let color: Color =
+                status == .completed ? orange :
+                status == .frozen ? cyan : .primary
+
+            let isMarked = status != nil
 
             Text("\(day)")
                 .font(.title3)
                 .foregroundStyle(
-                    isMarked ? color : .white
+                    isTodayUnlogged ? Color.white : color
                 )
                 .frame(width: 38, height: 38)
                 .background {
                     Circle()
                         .fill(
-                            isMarked
-                            ? color.opacity(0.12)
-                            : .clear
+                            isTodayUnlogged
+                            ? orange
+                            : isMarked
+                                ? color.opacity(0.12)
+                                : .clear
                         )
                 }
 

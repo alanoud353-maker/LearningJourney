@@ -20,9 +20,8 @@ enum GoalState {
 
 struct Setgoal: View {
     
-    
-    @State private var showUpdateGoal = false
-    @State  var state: GoalState = .completed
+
+    let state: GoalState
 
     private let orange = Color("Orange2")
 
@@ -63,7 +62,7 @@ struct Setgoal: View {
                 } label: {
                     HStack(spacing: 8) {
                         Image(systemName: "pencil.and.outline") // يمكنك تغيير اسم الأيقونة هنا
-                        Text("Set a Gola")
+                        Text("Set a Goal")
                     }
                     .font(.body.weight(.medium))
                     .foregroundStyle(.white)

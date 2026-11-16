@@ -14,16 +14,10 @@ final class DailyRecord {
 
     var date: Date
     var status: DayStatus
-    var goal: LearningGoal?
+    
 
-    init(
-        date: Date,
-        status: DayStatus,
-        goal: LearningGoal
-    ) {
-        self.date = Calendar.current.startOfDay(for: date)
+    init(date: Date = .now, status: DayStatus) {
+        self.date = date
         self.status = status
-        self.goal = goal
-        
     }
 }

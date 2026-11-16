@@ -16,9 +16,7 @@ struct ContentView: View {
         
         NavigationStack {
             
-            
-            
-            
+
             if goals.isEmpty {
                 OnboardingView()
             } else {

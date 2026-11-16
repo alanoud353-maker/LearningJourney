@@ -11,6 +11,7 @@ struct CustomAlert: View {
     @Binding var showAlert: Bool
 
     private let orange = Color("Orange2")
+    var onUpdate: () -> Void = {}
 
     var body: some View {
 
@@ -37,6 +38,7 @@ struct CustomAlert: View {
 
                     Button("Update") {
                         showAlert = false
+                        onUpdate()
                         // Update logic later
                     }
                     .buttonStyle(.glassProminent)

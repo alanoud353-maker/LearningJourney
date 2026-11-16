@@ -3,7 +3,7 @@
 //  LearningJourney
 //
 //  Created by alanoud on 03/06/1448 AH.
-//
+// (Computed Properties)
 
 import Foundation
 
@@ -21,15 +21,19 @@ class CalendarViewModel {
 
     var months: [Date] {
 
-        let year = calendar.component(.year, from: today)
+        let calendar = Calendar.current
+        let currentYear = calendar.component(.year, from: .now)
 
-        return (1...12).compactMap { month in
-            calendar.date(
-                from: DateComponents(
-                    year: year,
-                    month: month
-                )
-            )
+        guard let start = calendar.date(
+            from: DateComponents(year: currentYear, month: 1, day: 1)
+        ) else {
+            return []
+        }
+
+        // 24 شهر = السنة الحالية + السنة القادمة
+        
+        return (0..<24).compactMap {
+            calendar.date(byAdding: .month, value: $0, to: start)
         }
     }
 

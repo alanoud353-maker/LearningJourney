@@ -14,11 +14,9 @@ struct OnboardingViewModel {
     //هذه الداله لانشاءهدف جديد
     //
     
-        func createGoal(
-            topic: String,
-            selected: String,
-            context: ModelContext
-        ) throws {
+        func createGoal(topic: String,selected: String,context: ModelContext)
+            
+        throws {
             
             let cleanTopic = topic.trimmingCharacters(
                 in: .whitespacesAndNewlines

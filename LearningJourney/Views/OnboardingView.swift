@@ -40,53 +40,13 @@ struct OnboardingView: View {
             .padding(.top, 80)
             .padding(.horizontal, 17)
 
-            // حقل الهدف
-            VStack(alignment: .leading, spacing: 19) {
-                Text("I want to learn")
+            // MARK: - Shared Goal Form
 
-                TextField(
-                    "",
-                    text: $topic,
-                    prompt: Text("Swift").foregroundStyle(Color(uiColor: .tertiaryLabel))
-                )
-
-                Rectangle()
-                    .fill(Color(uiColor: .separator))
-                    .frame(height: 0.5)
-            }
+            GoalForm(
+                topic: $topic,
+                selected: $selected
+            )
             .padding(.top, 37)
-            .padding(.horizontal, 17)
-
-            // اختيار المدة
-            VStack(alignment: .leading, spacing: 13) {
-                Text("I want to learn it in a")
-                    .padding(.horizontal, 17)
-
-                GlassEffectContainer(spacing: 12) {
-                    HStack(spacing: 12) {
-                        ForEach(durations, id: \.self) { duration in
-                            let isSelected = duration == selected
-
-                            Button {
-                                withAnimation(.smooth) { selected = duration }
-                            } label: {
-                                Text(duration)
-                                    .font(.body.weight(.medium))
-                                    .foregroundStyle(isSelected ? .white : Color(uiColor: .tertiaryLabel))
-                                    .padding(.horizontal, 24)
-                                    .frame(height: 46)
-                            }
-                            .buttonStyle(.plain)
-                            .glassEffect(
-                                isSelected ? .regular.tint(orange).interactive() : .regular.interactive(),
-                                in: .capsule
-                            )
-                        }
-                    }
-                    .padding(.horizontal, 18)
-                }
-            }
-            .padding(.top, 30)
 
             Spacer()
 
