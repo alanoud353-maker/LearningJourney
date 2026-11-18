@@ -72,6 +72,10 @@ Notification permission is optional. Streak calculations work independently of n
 
 ## Built With
 
+![Swift](https://img.shields.io/badge/Swift-F05138?style=for-the-badge&logo=swift&logoColor=white)
+![SwiftUI](https://img.shields.io/badge/SwiftUI-007AFF?style=for-the-badge&logo=swift&logoColor=white)
+![Xcode](https://img.shields.io/badge/Xcode-147EFB?style=for-the-badge&logo=xcode&logoColor=white)
+
 - **Swift** — Application logic.
 - **SwiftUI** — User interface.
 - **SwiftData** — Local data persistence.
