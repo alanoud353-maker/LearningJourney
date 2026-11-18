@@ -11,6 +11,7 @@ struct CustomAlert: View {
     @Binding var showAlert: Bool
 
     private let orange = Color("Orange2")
+
     var onUpdate: () -> Void = {}
 
     var body: some View {
@@ -19,39 +20,67 @@ struct CustomAlert: View {
 
             Color.black.opacity(0.6)
 
-            VStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 16) {
 
+                // MARK: - Title
                 Text("Update goal")
-                    .font(.headline)
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(.white)
 
+                // MARK: - Message
                 Text("If you update now, your streak will start over.")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
+                    .font(.system(size: 16, weight: .regular))
+                    .foregroundStyle(.gray)
+                    .fixedSize(horizontal: false, vertical: true)
 
-                HStack(spacing: 12) {
+                // MARK: - Buttons
+                GlassEffectContainer(spacing: 8) {
 
-                    Button("Dismiss") {
-                        showAlert = false
+                    HStack(spacing: 8) {
+
+                        // Dismiss Button
+                        Button {
+                            showAlert = false
+                        } label: {
+                            Text("Dismiss")
+                                .font(.system(size: 16))
+                                .foregroundStyle(.white)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 48)
+                                .contentShape(Capsule())
+                        }
+                        .buttonStyle(.plain)
+                        .background(Color(red: 51/255, green: 51/255, blue: 53/255), in: Capsule())
+                        
+
+                        // Update Button
+                        Button {
+                            showAlert = false
+                            onUpdate()
+                        } label: {
+                            Text("Update")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(.white)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 48)
+                                .contentShape(Capsule())
+                        }
+                        .buttonStyle(.plain)
+                        .glassEffect(
+                            .regular.tint(orange).interactive(),
+                            in: .capsule
+                        )
                     }
-                    .buttonStyle(.glass)
-
-                    Button("Update") {
-                        showAlert = false
-                        onUpdate()
-                        // Update logic later
-                    }
-                    .buttonStyle(.glassProminent)
-                    .tint(orange)
                 }
-                .controlSize(.large)
+                .padding(.top, 8)
+                .padding(.bottom, 3)
+                
             }
-            .padding(24)
-            .frame(maxWidth: 320)
-            .background(
-                .regularMaterial,
-                in: RoundedRectangle(cornerRadius: 28)
-            )
+            .padding(20)
+            .frame(width: 320)
+            .glassEffect(
+                .regular.tint(.black.opacity(0.2)),
+                in: .rect(cornerRadius: 34))
         }
     }
 }
@@ -60,5 +89,5 @@ struct CustomAlert: View {
     @Previewable @State var showAlert = true
 
     CustomAlert(showAlert: $showAlert)
+        .preferredColorScheme(.dark)
 }
-

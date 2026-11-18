@@ -3,7 +3,7 @@
 //  LearningJourney
 //
 //  Created by alanoud on 01/06/1448 AH.
-//  LearningGoal هذا اوبجكت رح استخدمه في كلاس 
+//  
 
 enum Duration: String, Codable, CaseIterable, Identifiable {
     case week = "Week"

@@ -26,6 +26,10 @@ struct Logday: View {
     @Query private var records: [DailyRecord]
     
     private let viewModel = ActivityViewModel()
+    private let notificationManager = NotificationManager()
+    
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var currentTime = Date.now
     
     // MARK: - UI Colors
     
@@ -44,12 +48,20 @@ struct Logday: View {
     }
     
     private var todayStatus: DayStatus? {
-        viewModel.status(on: .now, records: goalRecords)
+        viewModel.status(
+            on: currentTime,
+            records: goalRecords
+        )
     }
     
     private var streakCount: Int {
         guard let goal else { return 0 }
-        return viewModel.streak(for: goal, records: records)
+
+        return viewModel.streak(
+            for: goal,
+            records: records,
+            now: currentTime
+        )
     }
     
     private var freezesUsed: Int {
@@ -62,19 +74,16 @@ struct Logday: View {
         todayStatus == .completed
     }
     
-    private var isFreezeDisabled: Bool {
-        viewModel.isFreezeDisabled(
-            goal: goal,
-            records: goalRecords
+    private var isFreezeDisabled: Bool {viewModel.isFreezeDisabled(goal: goal,records: goalRecords,now: currentTime
         )
     }
     
 
-    
     private var currentGoalState: GoalState {
         viewModel.goalState(
             for: goal,
-            records: records
+            records: records,
+            now: currentTime
         )
     }
     
@@ -95,7 +104,7 @@ struct Logday: View {
                         .padding(.leading, 16)
                     
                     Text(
-                        Date.now,
+                        currentTime,
                         format: .dateTime.weekday(.wide).day().month(.wide)
                     )
                     .font(.body)
@@ -106,39 +115,37 @@ struct Logday: View {
                 Spacer()
                 
                 GlassEffectContainer(spacing: 12) {
-                    
                     HStack(spacing: 12) {
                         
                         NavigationLink {
                             CalendarView()
                         } label: {
-                            Label("Calendar", systemImage: "calendar")
+                            Image(systemName: "calendar")
+                                .font(.system(size: 20))
+                                .foregroundStyle(.primary)
+                                .frame(width: 44, height: 44)
+                                .glassEffect(.regular, in: .circle)
                         }
                         
                         NavigationLink {
                             UpdateGoalView()
                         } label: {
-                            Label("Goal", systemImage: "pencil.and.outline")
+                            Image(systemName: "pencil.and.outline")
+                                .font(.system(size: 20))
+                                .foregroundStyle(.primary)
+                                .frame(width: 44, height: 44)
+                                .glassEffect(.regular, in: .circle)
                         }
                     }
-                    .labelStyle(.iconOnly)
-                    .buttonStyle(.glass)
-                    .buttonBorderShape(.circle)
-                    .controlSize(.large)
-                    .font(.system(size: 22, weight:.regular))
-                    
-                }
-                .padding(.trailing, 16)
-                
-                
-            }
+                }.tint(.white)
+            }.padding(.trailing, 16)
             
             // MARK: - Weekly Calendar
             
             HStack(spacing: 14) {
                 
                 ForEach(
-                    viewModel.weekDates(for: goal),
+                    viewModel.weekDates(for: goal, now: currentTime),
                     id: \.self
                 ) { date in
                     
@@ -147,7 +154,7 @@ struct Logday: View {
                         records: goalRecords
                     )
                     
-                    let isToday = Calendar.current.isDateInToday(date)
+                    let isToday = Calendar.current.isDate(date, inSameDayAs: currentTime)
                     
                     let isTodayUnlogged = isToday && status == nil
                     
@@ -163,11 +170,11 @@ struct Logday: View {
                             .frame(width: 28)
                         
                         Text(date, format: .dateTime.day())
-                            .font(.body)
+                            .font(.system(size: 20, weight: .regular))
                             .foregroundStyle(
                                 isTodayUnlogged ? .white : color
                             )
-                            .frame(width: 40, height: 40)
+                            .frame(width: 44, height: 44)
                             .background {
                                 Circle()
                                     .fill(
@@ -183,7 +190,7 @@ struct Logday: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 15)
-            .padding(.trailing, 14)
+            .padding(.horizontal, 14)
             
             // MARK: - Stat Cards
             
@@ -205,7 +212,7 @@ struct Logday: View {
                                 .foregroundStyle(color)
                                 .font(.title2)
                             
-                            Text("\(value) \(value == 1 ? "day" : "days")") //هنا اذا فردي او زوجي
+                            Text("\(value) \(value == 1 ? "day" : "days")") //هنا اذا فردي او جمع
                                 .font(.headline)
                             
                             Text(title)
@@ -214,7 +221,7 @@ struct Logday: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 102)
                         .glassEffect(
-                            .regular.tint(.black.opacity(0.4)),
+                            .regular.tint(.black.opacity(0.2)),
                             in: .rect(cornerRadius: 34)
                         )
                     }
@@ -251,6 +258,7 @@ struct Logday: View {
                         .font(.headline)
                         .foregroundStyle(isLogged ? .gray : .white)
                         .frame(width: 272, height: 272)
+                        .contentShape(Circle()) //الشكل كامل يستجيب
                         .overlay {
                             if !isLogged {
                                 Circle()
@@ -262,11 +270,9 @@ struct Logday: View {
                         }
                     }
                     .buttonStyle(.plain)
-                    .disabled(isLogged || goal == nil)
-                    .buttonStyle(.plain)
                     .glassEffect(
                         isLogged
-                        ? .regular.tint(.black.opacity(0.4))
+                        ? .regular.tint(.black.opacity(0.2))
                         : .regular.tint(.orange2).interactive(),
                         in: .circle
                     )
@@ -295,17 +301,14 @@ struct Logday: View {
                                 ? "Freezed for a day"
                                 : "Freeze for a day"
                             )
-                            .font(.body.weight(.medium))
-                            .foregroundStyle(
-                                todayStatus == .frozen
-                                ? .gray : .white
-                            )
+                            .foregroundStyle(isFreezeDisabled ? .gray : .white)
                             .frame(width: 272, height: 46)
+                          
                         }
                         .buttonStyle(.plain)
                         .glassEffect(
-                            todayStatus == .frozen
-                            ? .regular.tint(.black.opacity(0.4))
+                            isFreezeDisabled
+                            ? .regular.tint(.black.opacity(0.2))
                             : .regular.tint(cyan).interactive(),
                             in: .capsule
                         )
@@ -315,8 +318,9 @@ struct Logday: View {
                             "\(freezesUsed) out of \(goal?.duration.freezeLimit ?? 0) Freezes used"
                         )
                         
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(.caption.weight(.regular))
+                        .foregroundStyle(Color("Gray"))
+                        
                     }
                     .frame(maxWidth: .infinity)
                     
@@ -337,6 +341,28 @@ struct Logday: View {
                         maxWidth: .infinity,
                         maxHeight: .infinity
                     )
+            }
+        }
+        .onAppear {
+            currentTime = .now
+        }.task {
+            do {
+                _ = try await NotificationManager().requestPermission()
+            } catch {
+                print("Notification permission failed: \(error)")
+            }
+        }
+        .task(id: scenePhase) {
+            guard scenePhase == .active else { return }
+
+            // Keep day status fresh across midnight and when returning to the app.
+            while !Task.isCancelled {
+                currentTime = .now
+                do {
+                    try await Task.sleep(for: .seconds(1))
+                } catch {
+                    return
+                }
             }
         }
     }

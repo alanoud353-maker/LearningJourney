@@ -16,7 +16,6 @@ struct OnboardingView: View {
     @State private var topic = ""
     @State private var selected = "Week"
 
-    let durations = ["Week", "Month", "Year"]
     private let orange = Color("Orange2")
 
     var body: some View {

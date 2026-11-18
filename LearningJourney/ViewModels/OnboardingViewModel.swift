@@ -22,16 +22,12 @@ struct OnboardingViewModel {
                 in: .whitespacesAndNewlines
             )
             
-            guard !cleanTopic.isEmpty,
-                  let duration = Duration(rawValue: selected)
+            guard !cleanTopic.isEmpty,let duration = Duration(rawValue: selected)
                     else {
                 return
             }
             
-            let goal = LearningGoal(
-                topic: cleanTopic,
-                duration: duration
-            )
+            let goal = LearningGoal(topic: cleanTopic,duration: duration)
             
             context.insert(goal)
             try context.save()
