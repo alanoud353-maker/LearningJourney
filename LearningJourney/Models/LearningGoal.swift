@@ -3,7 +3,7 @@
 //  LearningJourney
 //
 //  Created by alanoud on 01/06/1448 AH.
-//   duration كلاس فيه انواع بيانات بسطه و من اوبجكت
+//  
 
 import Foundation
 import SwiftData

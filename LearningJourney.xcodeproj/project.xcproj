@@ -32,6 +32,7 @@
         "resources",
       ],
       "build-settings": {
+        "ASSETCATALOG_COMPILER_APPICON_NAME": "LearningJourney",
         "CODE_SIGN_STYLE": "Automatic",
         "CURRENT_PROJECT_VERSION": "1",
         "DEVELOPMENT_TEAM": "N2SNF5Y34L",
@@ -53,7 +54,7 @@
         "LD_RUNPATH_SEARCH_PATHS": "@executable_path/Frameworks",
         "LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]": "@executable_path/../Frameworks",
         "MARKETING_VERSION": "1.0",
-        "PRODUCT_BUNDLE_IDENTIFIER": "devplaceholder.$(PROJECT_UNIQUE_VALUE:identifier).$(PRODUCT_NAME:rfc1034identifier)",
+        "PRODUCT_BUNDLE_IDENTIFIER": "com.alanoudalanazipersonalteam.LearningJourney",
         "PRODUCT_NAME": "$(TARGET_NAME)",
         "REGISTER_APP_GROUPS": "YES",
         "SDKROOT": "auto",
@@ -139,5 +140,5 @@
     "XROS_DEPLOYMENT_TARGET": "27.2",
   },
   "last-upgrade": "27.0",
-  "last-swift-update": "27.0",
+  "last-swift-update": "27.2",
 }
