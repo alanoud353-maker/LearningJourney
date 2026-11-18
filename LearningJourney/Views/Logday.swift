@@ -137,7 +137,7 @@ struct Logday: View {
                                 .glassEffect(.regular, in: .circle)
                         }
                     }
-                }.tint(.white)
+                }.tint(.primary)
             }.padding(.trailing, 16)
             
             // MARK: - Weekly Calendar

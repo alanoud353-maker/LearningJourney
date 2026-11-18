@@ -78,7 +78,7 @@ struct OnboardingView: View {
             .frame(maxWidth: .infinity)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .foregroundStyle(.white)
+    
     }
 }
 
