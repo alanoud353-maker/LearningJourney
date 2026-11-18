@@ -25,13 +25,6 @@ An iOS app that helps users build a learning habit by setting goals, logging dai
 - A new calendar day allows a new learning log.
 - Duplicate learning logs are prevented within the current goal. Updating the goal allows a fresh log, even on the same day.
 
-### Example
-
-If you log your learning on Tuesday at 10 PM:
-
-- Logging again on Thursday at 1 AM keeps your streak going because only 27 hours have passed.
-- Without another Log or Freeze, your streak resets on Thursday at 6 AM, when 32 hours have elapsed.
-- If Wednesday has no Learned or Frozen record, it remains a missing day when the goal is evaluated.
 
 ## Freeze Allowance
 
